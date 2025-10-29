@@ -267,6 +267,42 @@ export default function EditPersonPage({ params }: { params: Promise<{ id: strin
             </div>
           </div>
 
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm">
+            <h2 className="text-xl font-bold mb-4">Links to Monitor</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-2">LinkedIn URL</label>
+                <input
+                  type="url"
+                  value={person.linkedin_url || ''}
+                  onChange={(e) => setPerson({ ...person, linkedin_url: e.target.value })}
+                  className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                  placeholder="https://linkedin.com/in/username"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Twitter Handle</label>
+                <input
+                  type="text"
+                  value={person.twitter_handle || ''}
+                  onChange={(e) => setPerson({ ...person, twitter_handle: e.target.value })}
+                  className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                  placeholder="@username"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-2">Company Domain</label>
+                <input
+                  type="text"
+                  value={person.company_domain || ''}
+                  onChange={(e) => setPerson({ ...person, company_domain: e.target.value })}
+                  className="w-full px-4 py-2 border rounded-lg dark:bg-gray-700 dark:border-gray-600"
+                  placeholder="company.com"
+                />
+              </div>
+            </div>
+          </div>
+
           <div className="flex gap-4">
             <button
               type="submit"

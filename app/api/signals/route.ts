@@ -12,14 +12,27 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { person_name, person_id, signal_type, content, url, relevance_score, detected_at } = body;
+    const { person_name, person_id, signal_type, title, description, content, url, source, relevance_score, detected_at } = body;
+
+    // Support both 'content' (from n8n) and 'title' (from schema)
+    const signalTitle = title || content;
+    const signalSource = source || 'n8n';
 
     // Validate required fields
-    if (!signal_type || !content) {
+    if (!signal_type || !signalTitle) {
       return NextResponse.json(
-        { error: 'Missing required fields: signal_type, content' },
+        { error: 'Missing required fields: signal_type, title (or content)' },
         { status: 400 }
       );
+    }
+
+    // Map common signal types to valid values
+    const validSignalTypes = ['article', 'press', 'job_change', 'funding', 'speaking', 'social_post', 'product_launch', 'other'];
+    let mappedSignalType = signal_type;
+    if (signal_type === 'news') mappedSignalType = 'article';
+    if (signal_type === 'test') mappedSignalType = 'other';
+    if (!validSignalTypes.includes(mappedSignalType)) {
+      mappedSignalType = 'other';
     }
 
     const supabase = getServiceSupabase();
@@ -68,9 +81,11 @@ export async function POST(request: NextRequest) {
       .from('signals')
       .insert({
         person_id: personRecord!.id,
-        signal_type,
-        content,
+        signal_type: mappedSignalType,
+        title: signalTitle,
+        description: description || null,
         url: url || null,
+        source: signalSource,
         relevance_score: finalRelevanceScore,
         detected_at: detected_at || new Date().toISOString(),
       })
